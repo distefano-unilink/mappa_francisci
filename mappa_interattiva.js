@@ -2507,7 +2507,7 @@ if (reversed == null) { reversed = false; }
 		        console.error("Errore nel download da Google Fogli: ", error);
 		    });
 		
-		// GESTIONE AUTOMATICA STANZE, HOVER E COMPATIBILITÀ TOUCH SCREEN (Rilevamento Posizione Touch)
+		// GESTIONE AUTOMATICA STANZE, HOVER E COMPATIBILITÀ TOUCH SCREEN (Versione Diagnostica)
 		var localeSelezionatoTouch = null;
 		
 		if (root.mappa_mc) {
@@ -2523,7 +2523,7 @@ if (reversed == null) { reversed = false; }
 		                oggetto.minAlpha = isSpeciale ? 0.01 : opacitaRiposo;
 		                oggetto.alpha = oggetto.minAlpha;
 		
-		                // 💻 COMPORTAMENTO PER MOUSE (DESKTOP) - INVARIATO
+		                // 💻 COMPORTAMENTO PER MOUSE (DESKTOP)
 		                oggetto.addEventListener("mouseover", function(e) {
 		                    var localeCorrente = e.currentTarget;
 		                    localeCorrente.alpha = opacitaHover; 
@@ -2539,13 +2539,19 @@ if (reversed == null) { reversed = false; }
 		                    chiudiPopupAttuale();
 		                });
 		
-		                // 📱 COMPORTAMENTO INTERRUTTORE PER TOUCH (CORRETTO PER COORDINATE SCHERMO)
+		                // 📱 COMPORTAMENTO INTERRUTTORE PER TOUCH (CON DIAGNOSTICA LIVE)
 		                oggetto.addEventListener("click", function(e) {
-		                    if (staTrascinando) return;
+		                    console.log("👉 [DEBUG 1] Click intercettato sulla stanza con nome istanza: " + e.currentTarget.name);
+		                    
+		                    if (staTrascinando) {
+		                        console.log("❌ [DEBUG] Click annullato perché l'utente sta trascinando la mappa.");
+		                        return;
+		                    }
 		
 		                    var localeCorrente = e.currentTarget;
 		
 		                    if (localeSelezionatoTouch === localeCorrente) {
+		                        console.log("🔄 [DEBUG 2] Stessa stanza cliccata di nuovo. Avvio chiusura pop-up.");
 		                        localeCorrente.alpha = localeCorrente.minAlpha;
 		                        chiudiPopupAttuale();
 		                        localeSelezionatoTouch = null;
@@ -2558,12 +2564,13 @@ if (reversed == null) { reversed = false; }
 		                        localeCorrente.alpha = opacitaHover;
 		                        
 		                        if (localeCorrente.name && localeCorrente.name.indexOf("_") !== -1) {
-		                            // 🌟 SOLUZIONE TOUCH: Calcoliamo la posizione globale dell'oggetto sullo stage 
-		                            // convertendo le sue coordinate locali rispetto alla mappa zoomata/trascinata
 		                            var pt = localeCorrente.localToGlobal(0, 0);
+		                            console.log("🚀 [DEBUG 3] Tento di lanciare il pop-up per: " + localeCorrente.name.toUpperCase() + " a coordinate schermo X: " + pt.x + " Y: " + pt.y);
 		                            
-		                            // Inviamo le coordinate reali calcolate alla funzione del pop-up
+		                            // Chiamata alla funzione reale
 		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), pt.x, pt.y);
+		                        } else {
+		                            console.log("⚠️ [DEBUG] Il nome della stanza non contiene il carattere '_' richiesto.");
 		                        }
 		                        localeSelezionatoTouch = localeCorrente;
 		                    }
@@ -2740,7 +2747,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#6600FF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#FF0099").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2773,8 +2780,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790424557477", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790424557477", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790424991196", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790424991196", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
