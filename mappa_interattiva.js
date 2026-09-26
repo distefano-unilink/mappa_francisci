@@ -2539,38 +2539,25 @@ if (reversed == null) { reversed = false; }
 		                    chiudiPopupAttuale();
 		                });
 		
-		                // 📱 COMPORTAMENTO INTERRUTTORE PER TOUCH (CON DIAGNOSTICA LIVE)
+		               // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
 		                oggetto.addEventListener("click", function(e) {
-		                    console.log("👉 [DEBUG 1] Click intercettato sulla stanza con nome istanza: " + e.currentTarget.name);
-		                    
-		                    if (staTrascinando) {
-		                        console.log("❌ [DEBUG] Click annullato perché l'utente sta trascinando la mappa.");
-		                        return;
-		                    }
-		
+		                    if (staTrascinando) return;
 		                    var localeCorrente = e.currentTarget;
 		
 		                    if (localeSelezionatoTouch === localeCorrente) {
-		                        console.log("🔄 [DEBUG 2] Stessa stanza cliccata di nuovo. Avvio chiusura pop-up.");
 		                        localeCorrente.alpha = localeCorrente.minAlpha;
 		                        chiudiPopupAttuale();
 		                        localeSelezionatoTouch = null;
-		                    } 
-		                    else {
+		                    } else {
 		                        if (localeSelezionatoTouch) {
 		                            localeSelezionatoTouch.alpha = localeSelezionatoTouch.minAlpha;
 		                        }
-		                        
 		                        localeCorrente.alpha = opacitaHover;
-		                        
 		                        if (localeCorrente.name && localeCorrente.name.indexOf("_") !== -1) {
-		                            var pt = localeCorrente.localToGlobal(0, 0);
-		                            console.log("🚀 [DEBUG 3] Tento di lanciare il pop-up per: " + localeCorrente.name.toUpperCase() + " a coordinate schermo X: " + pt.x + " Y: " + pt.y);
 		                            
-		                            // Chiamata alla funzione reale
-		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), pt.x, pt.y);
-		                        } else {
-		                            console.log("⚠️ [DEBUG] Il nome della stanza non contiene il carattere '_' richiesto.");
+		                            // 🌟 SOLUZIONE DEFINITIVA: Agganciamo il pop-up al punto esatto in cui l'utente tocca lo schermo!
+		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), e.stageX, e.stageY);
+		                            
 		                        }
 		                        localeSelezionatoTouch = localeCorrente;
 		                    }
@@ -2779,8 +2766,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790426379393", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790426379393", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790439396930", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790439396930", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
