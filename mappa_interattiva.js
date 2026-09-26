@@ -2539,7 +2539,7 @@ if (reversed == null) { reversed = false; }
 		                    chiudiPopupAttuale();
 		                });
 		
-		               // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
+		              // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
 		                oggetto.addEventListener("click", function(e) {
 		                    if (staTrascinando) return;
 		                    var localeCorrente = e.currentTarget;
@@ -2555,8 +2555,18 @@ if (reversed == null) { reversed = false; }
 		                        localeCorrente.alpha = opacitaHover;
 		                        if (localeCorrente.name && localeCorrente.name.indexOf("_") !== -1) {
 		                            
-		                            // 🌟 SOLUZIONE DEFINITIVA: Agganciamo il pop-up al punto esatto in cui l'utente tocca lo schermo!
-		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), e.stageX, e.stageY);
+		                            // 🌟 AGGANCIO MATEMATICO AL CANVAS REALE SULLO SCHERMO
+		                            var rectCanvas = stage.canvas.getBoundingClientRect();
+		                            
+		                            // Trasformiamo i pixel di Animate in pixel reali della finestra del browser
+		                            var fattoreScalaX = rectCanvas.width / stage.canvas.width;
+		                            var fattoreScalaY = rectCanvas.height / stage.canvas.height;
+		                            
+		                            var pixelRealiX = e.stageX * fattoreScalaX;
+		                            var pixelRealiY = e.stageY * fattoreScalaY;
+		                            
+		                            // Inviamo alla funzione i pixel precisi convertiti per la pagina HTML
+		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), pixelRealiX, pixelRealiY);
 		                            
 		                        }
 		                        localeSelezionatoTouch = localeCorrente;
@@ -2733,7 +2743,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#FFFF00").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#CC00CC").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2766,8 +2776,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790439583012", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790439583012", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790440240036", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790440240036", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
