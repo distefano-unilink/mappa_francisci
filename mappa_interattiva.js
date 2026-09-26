@@ -2587,9 +2587,8 @@ if (reversed == null) { reversed = false; }
 		    var datiStanza = databaseLocaliOnline[identificatoreLibreria];
 		    var schemaHTML = "";
 		    
-		    // Generiamo il percorso dinamico della foto basato sull'ID
-		    // Se la foto non esiste sul PC, il comando 'onerror' la nasconde automaticamente
-		    var tagImmagine = "<img src='foto_locali/" + identificatoreLibreria + ".jpg' style='width:100%; max-width:280px; height:auto; border-radius:4px; margin:10px 0 0 0; display:block;' onerror='this.style.display=\"none\";'>";
+		     var percorsoFoto = "foto_locali/" + identificatoreLibreria + ".jpg";
+		    var tagImmagine = "<img src='" + percorsoFoto + "' style='width:100%; max-width:280px; height:auto; border-radius:4px; margin:10px 0 0 0; display:block;' onerror='this.src=\"\"; this.style.display=\"none\";'>";
 		    
 		    if (datiStanza) {
 		        // 🌟 RILEVAMENTO AUTOMATICO DELLA CATEGORIA DAL NOME ID
@@ -2747,7 +2746,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#FF0099").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#66FF00").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2780,8 +2779,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790424991196", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790424991196", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790426379393", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790426379393", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
