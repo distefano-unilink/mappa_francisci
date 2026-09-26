@@ -2539,7 +2539,7 @@ if (reversed == null) { reversed = false; }
 		                    chiudiPopupAttuale();
 		                });
 		
-		              // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
+		             // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
 		                oggetto.addEventListener("click", function(e) {
 		                    if (staTrascinando) return;
 		                    var localeCorrente = e.currentTarget;
@@ -2555,17 +2555,29 @@ if (reversed == null) { reversed = false; }
 		                        localeCorrente.alpha = opacitaHover;
 		                        if (localeCorrente.name && localeCorrente.name.indexOf("_") !== -1) {
 		                            
-		                            // 🌟 AGGANCIO MATEMATICO AL CANVAS REALE SULLO SCHERMO
-		                            var rectCanvas = stage.canvas.getBoundingClientRect();
+		                            // 🌟 CALCOLO DEL CENTRO GEOMETRICO REALE DELLA STANZA (Ancoraggio Fisso)
+		                            var boundingBox = localeCorrente.getBounds();
+		                            var centroLocaleX = 0;
+		                            var centroLocaleY = 0;
 		                            
-		                            // Trasformiamo i pixel di Animate in pixel reali della finestra del browser
+		                            if (boundingBox) {
+		                                // Se il poligono ha dei confini definiti, prendiamo il centro esatto
+		                                centroLocaleX = boundingBox.x + (boundingBox.width / 2);
+		                                centroLocaleY = boundingBox.y + (boundingBox.height / 2);
+		                            }
+		                            
+		                            // Trasformiamo le coordinate interne della stanza in pixel globali di Animate
+		                            var puntoGlobaleAnimate = localeCorrente.localToGlobal(centroLocaleX, centroLocaleY);
+		                            
+		                            // Convertiamo i pixel di Animate in pixel reali della finestra del browser (Scala Canvas)
+		                            var rectCanvas = stage.canvas.getBoundingClientRect();
 		                            var fattoreScalaX = rectCanvas.width / stage.canvas.width;
 		                            var fattoreScalaY = rectCanvas.height / stage.canvas.height;
 		                            
-		                            var pixelRealiX = e.stageX * fattoreScalaX;
-		                            var pixelRealiY = e.stageY * fattoreScalaY;
+		                            var pixelRealiX = puntoGlobaleAnimate.x * fattoreScalaX;
+		                            var pixelRealiY = puntoGlobaleAnimate.y * fattoreScalaY;
 		                            
-		                            // Inviamo alla funzione i pixel precisi convertiti per la pagina HTML
+		                            // Inviamo le coordinate stabili del centro della stanza alla scheda HTML
 		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), pixelRealiX, pixelRealiY);
 		                            
 		                        }
@@ -2743,7 +2755,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#CC00CC").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#FF6600").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2776,8 +2788,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790440240036", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790440240036", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790441266552", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790441266552", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
