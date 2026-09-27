@@ -2603,13 +2603,13 @@ if (reversed == null) { reversed = false; }
 		}
 		
 		// ====================================================
-		// 3. FUNZIONE DI IMPAGINAZIONE POP-UP HTML DINAMICA (Foto in fondo alla scheda)
+		// 3. FUNZIONE DI IMPAGINAZIONE POP-UP HTML DINAMICA (Fisso in Basso - Zona Viola)
 		// ====================================================
 		function apriPopupSuSchermo(identificatoreLibreria, mX, mY) {
 		    var datiStanza = databaseLocaliOnline[identificatoreLibreria];
 		    var schemaHTML = "";
 		    
-		     var percorsoFoto = "foto_locali/" + identificatoreLibreria + ".jpg";
+		    var percorsoFoto = "foto_locali/" + identificatoreLibreria + ".jpg";
 		    var tagImmagine = "<img src='" + percorsoFoto + "' style='width:100%; max-width:280px; height:auto; border-radius:4px; margin:10px 0 0 0; display:block;' onerror='this.src=\"\"; this.style.display=\"none\";'>";
 		    
 		    if (datiStanza) {
@@ -2651,7 +2651,6 @@ if (reversed == null) { reversed = false; }
 		            coloreTitolo = "#ffffff"; 
 		            sfondoTitolo = "#ff6600"; 
 		        }
-		
 		
 		        // 🌟 1. TITOLO AUTOMATICO
 		        schemaHTML += "<b style='font-size:15px; color:" + coloreTitolo + "; background-color:" + sfondoTitolo + "; display:block; padding:0px 8px; margin:-5px 40px 8px -8px; border-radius:4px;'>" + datiStanza.nome + "</b>";
@@ -2723,31 +2722,32 @@ if (reversed == null) { reversed = false; }
 		        schemaHTML += tagImmagine;
 		    }
 		    
-		    // Iniezione del testo e calcolo delle coordinate dello schermo
+		    // Iniezione del testo nel box HTML
 		    elementoTestoHTML.innerHTML = schemaHTML;
 		    elementoTestoHTML.style.opacity = "0";
 		    elementoTestoHTML.style.display = "block";
 		    
-		    var canvasW = stage.canvas.width;
-		    var canvasH = stage.canvas.height;
-		    var rectCanvas = stage.canvas.getBoundingClientRect();
-		    var larghezzaRealeScheda = elementoTestoHTML.offsetWidth; 
-		    var altezzaRealeScheda = elementoTestoHTML.offsetHeight; 
+		    // ⚙️ RESET DELLE VECCHIE COORDINATE DINAMICHE
+		    elementoTestoHTML.style.left = "auto";
+		    elementoTestoHTML.style.top = "auto";
 		    
-		    var coordinataFinaleX = (mX < canvasW / 2) ? (mX + distanzaDalMouse) : (mX - larghezzaRealeScheda - distanzaDalMouse);
-		    var coordinataFinaleY = (mY < canvasH / 2) ? (mY + distanzaDalMouse) : (mY - altezzaRealeScheda - distanzaDalMouse);
+		    // 📱 FORZATURA CSS: BLOCCO FISSO IN BASSO AL CENTRO DELLO SCHERMO
+		    elementoTestoHTML.style.position = "fixed";
+		    elementoTestoHTML.style.bottom = "20px";                      // Distanza dal bordo inferiore
+		    elementoTestoHTML.style.left = "50%";                           // Centrato orizzontalmente
+		    elementoTestoHTML.style.transform = "translateX(-50%)";         // Calcolo esatto del centro geometrico
+		    elementoTestoHTML.style.width = "calc(100% - 40px)";            // Larghezza ottimizzata per mobile
+		    elementoTestoHTML.style.maxWidth = "340px";                     // Evita distorsioni su schermi larghi
+		    elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.5)"; // Ombra sfumata verso l'alto
 		    
-		    if (coordinataFinaleX + larghezzaRealeScheda > canvasW) coordinataFinaleX = canvasW - larghezzaRealeScheda - 10;
-		    if (coordinataFinaleX < 10) coordinataFinaleX = 10;
-		    if (coordinataFinaleY + altezzaRealeScheda > canvasH) coordinataFinaleY = canvasH - altezzaRealeScheda - 10;
-		    if (coordinataFinaleY < 10) coordinataFinaleY = 10;
+		    // Gestione della dissolvenza di comparsa
+		    var tDissolvenza = (typeof durataDissolvenza !== 'undefined') ? durataDissolvenza : 200;
+		    elementoTestoHTML.style.transition = "opacity " + tDissolvenza + "ms ease-in-out";
 		    
-		    elementoTestoHTML.style.left = (rectCanvas.left + coordinataFinaleX) + "px";
-		    elementoTestoHTML.style.top = (rectCanvas.top + coordinataFinaleY) + "px";
-		    
-		    elementoTestoHTML.style.transition = "opacity " + durataDissolvenza + "ms";
 		    setTimeout(function() { 
-		        if (elementoTestoHTML && elementoTestoHTML.style.display === "block") elementoTestoHTML.style.opacity = "1"; 
+		        if (elementoTestoHTML && elementoTestoHTML.style.display === "block") {
+		            elementoTestoHTML.style.opacity = "1"; 
+		        }
 		    }, 10);
 		}
 		
@@ -2768,7 +2768,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#CC33FF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#CCFF00").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2801,8 +2801,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790490711987", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790490711987", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790491906857", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790491906857", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
