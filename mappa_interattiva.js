@@ -2501,7 +2501,64 @@ if (reversed == null) { reversed = false; }
 		    };
 		}
 		        }
-		        console.log("Database Google Sheets sincronizzato con successo!");
+		       console.log("Database Google Sheets sincronizzato con successo!");
+		        
+		        // 🌟 ACCENSIONE AUTOMATICA IN ROSSO DEI LOCALI CON GUASTO + PULSAZIONE
+		        if (root.mappa_mc) {
+		            var elementiPiani = root.mappa_mc.children;
+		            for (var k = 0; k < elementiPiani.length; k++) {
+		                var stanzaGrafica = elementiPiani[k];
+		                if (stanzaGrafica && stanzaGrafica.name) {
+		                    var idMaiuscolo = stanzaGrafica.name.toUpperCase();
+		                    var datiAbbinati = databaseLocaliOnline[idMaiuscolo];
+		                    
+		                    // Se la stanza ha un guasto compilato (e non è vuoto, NESSUNA o OFF)
+		                    if (datiAbbinati && datiAbbinati.guasto && datiAbbinati.guasto !== "" && datiAbbinati.guasto !== "NESSUNA" && datiAbbinati.guasto !== "Nessuna" && datiAbbinati.guasto !== "OFF" && datiAbbinati.guasto !== "off") {
+		                        
+		                        // 🌟 Nuova etichetta personalizzata per far capire al ciclo di animazione che questa stanza deve pulsare
+		                        stanzaGrafica.isGuasto = true;
+		                        
+		                        // Impostiamo i limiti di opacità entro cui la stanza deve oscillare
+		                        stanzaGrafica.minAlpha = 0.3; // Opacità minima del guasto
+		                        stanzaGrafica.maxAlpha = 0.8; // Opacità massima del guasto
+		                        stanzaGrafica.alpha = stanzaGrafica.maxAlpha;
+		                        
+		                        // Direzione iniziale della pulsazione (1 = si sta scurendo, -1 = si sta schiarendo)
+		                        stanzaGrafica.direzionePulsazione = 1; 
+		                        
+		                        // Creiamo la colorazione rossa e applichiamo i filtri nativi di Animate/CreateJS
+		                        var filtroRosso = new createjs.ColorFilter(1, 0, 0, 1, 255, 0, 0, 0); 
+		                        stanzaGrafica.filters = [filtroRosso];
+		                        stanzaGrafica.cache(-50, -50, 1500, 1500); 
+		                    }
+		                }
+		            }
+		            
+		            // 🌟 AVVIO DEL MOTORE DI ANIMAZIONE CONTINUA PER I GUASTI
+		            // Questo evento scatta a ogni fotogramma della mappa (60 volte al secondo)
+		            createjs.Ticker.addEventListener("tick", function(event) {
+		                // Eseguiamo l'animazione solo se la mappa non è bloccata e l'utente non ci ha cliccato sopra
+		                for (var j = 0; j < elementiPiani.length; j++) {
+		                    var stanzaPulsante = elementiPiani[j];
+		                    
+		                    // Facciamo pulsare SOLO le stanze marchiate come guasto e che NON sono attualmente selezionate/sotto l'hover
+		                    if (stanzaPulsante && stanzaPulsante.isGuasto && stanzaPulsante !== localeSelezionatoTouch) {
+		                        
+		                        // Calcoliamo la velocità del lampeggio (0.015 è una velocità morbida e rilassante)
+		                        stanzaPulsante.alpha -= (0.015 * stanzaPulsante.direzionePulsazione);
+		                        
+		                        // Se tocca il massimo dell'80% o il minimo del 30%, inverte la direzione
+		                        if (stanzaPulsante.alpha <= stanzaPulsante.minAlpha) {
+		                            stanzaPulsante.alpha = stanzaPulsante.minAlpha;
+		                            stanzaPulsante.direzionePulsazione = -1; // Inverte e inizia a salire
+		                        } else if (stanzaPulsante.alpha >= stanzaPulsante.maxAlpha) {
+		                            stanzaPulsante.alpha = stanzaPulsante.maxAlpha;
+		                            stanzaPulsante.direzionePulsazione = 1;  // Inverte e inizia a scendere
+		                        }
+		                    }
+		                }
+		            });
+		        }
 		    })
 		    .catch(function(error) {
 		        console.error("Errore nel download da Google Fogli: ", error);
@@ -2781,36 +2838,27 @@ if (reversed == null) { reversed = false; }
 		        elementoTestoHTML.innerHTML = ""; 
 		    }
 		}
+		// Ricarica la pagina in automatico ogni 30 secondi per aggiornare i guasti live dal bot vocale
+		setInterval(function() { window.location.reload(); }, 5000);
 	}
 
 	// actions tween:
 	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(1));
-
-	// interfaccia
-	this.shape = new cjs.Shape();
-	this.shape.graphics.f().s("#33FF00").ss(1,1,1).p("AKEAAQAADsi9CmQi9CmkKAAQkJAAi9imQi8imAAjsQAAjqC8inQC9imEJAAQEKAAC9CmQC9CnAADqg");
-	this.shape.setTransform(571.4,591.05);
-
-	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#CC6600").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
-	this.shape_1.setTransform(571.4,591.05);
-
-	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
 
 	// Livello_1
 	this.mappa_mc = new lib.mappa_mc();
 	this.mappa_mc.name = "mappa_mc";
 	this.mappa_mc.setTransform(1006.25,573.15,0.3004,0.3003,0,0,0,3335.7,2587.6);
 
-	this.shape_2 = new cjs.Shape();
-	this.shape_2.graphics.f().s("#33FF00").ss(1,1,1).p("AECAAQAABnhMBJQhMBKhqAAQhpAAhMhKQhMhJAAhnQAAhnBMhJQBMhJBpAAQBqAABMBJQBMBJAABng");
-	this.shape_2.setTransform(593.35,524.45);
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f().s("#33FF00").ss(1,1,1).p("AECAAQAABnhMBJQhMBKhqAAQhpAAhMhKQhMhJAAhnQAAhnBMhJQBMhJBpAAQBqAABMBJQBMBJAABng");
+	this.shape.setTransform(593.35,524.45);
 
-	this.shape_3 = new cjs.Shape();
-	this.shape_3.graphics.f("#6600FF").s().p("Ai1CwQhLhIAAhoQAAhmBLhKQBLhJBqAAQBqAABMBJQBMBKAABmQAABohMBIQhMBKhqAAQhqAAhLhKg");
-	this.shape_3.setTransform(593.35,524.45);
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#6600FF").s().p("Ai1CwQhLhIAAhoQAAhmBLhKQBLhJBqAAQBqAABMBJQBMBKAABmQAABohMBIQhMBKhqAAQhqAAhLhKg");
+	this.shape_1.setTransform(593.35,524.45);
 
-	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_3},{t:this.shape_2},{t:this.mappa_mc}]}).wait(1));
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape},{t:this.mappa_mc}]}).wait(1));
 
 	this._renderFirstFrame();
 
@@ -2825,8 +2873,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790504744106", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790504744106", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790526831317", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790526831317", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
