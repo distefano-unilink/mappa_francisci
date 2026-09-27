@@ -2737,28 +2737,32 @@ if (reversed == null) { reversed = false; }
 		        if (coordinataFinaleY + altezzaRealeScheda > canvasH) coordinataFinaleY = canvasH - altezzaRealeScheda - 10;
 		        if (coordinataFinaleY < 10) coordinataFinaleY = 10;
 		        
-		        elementoTestoHTML.style.setProperty("left", (rectCanvas.left + coordinataFinaleX) + "px", "important");
-		        elementoTestoHTML.style.setProperty("top", (rectCanvas.top + coordinataFinaleY) + "px", "important");
+		        elementoTestoHTML.style.left = (rectCanvas.left + coordinataFinaleX) + "px";
+		        elementoTestoHTML.style.top = (rectCanvas.top + coordinataFinaleY) + "px";
 		    } else {
-		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Blindatura totale contro lo zoom di Animate
+		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Svincolato al 100% da Animate
+		        // Lo spostiamo fisicamente fuori dal contenitore di Animate e lo attacchiamo alla radice del browser
 		        if (elementoTestoHTML.parentNode !== document.body) {
 		            document.body.appendChild(elementoTestoHTML);
 		        }
 		        
-		        // Usiamo setProperty con "important" per scavalcare lo zoom forzato di Animate sulla pagina
-		        elementoTestoHTML.style.setProperty("position", "fixed", "important");
-		        elementoTestoHTML.style.setProperty("bottom", "20px", "important");
-		        elementoTestoHTML.style.setProperty("left", "10vw", "important"); // 10% dal bordo sinistro
-		        elementoTestoHTML.style.setProperty("right", "10vw", "important"); // 10% dal bordo destro
-		        elementoTestoHTML.style.setProperty("width", "80vw", "important"); // Larghezza fissa all'80% dello schermo reale
-		        elementoTestoHTML.style.setProperty("max-width", "80vw", "important");
-		        elementoTestoHTML.style.setProperty("top", "auto", "important");
+		        elementoTestoHTML.style.top = "auto";
+		        elementoTestoHTML.style.left = "50%";
 		        
-		        // Azzeriamo geometricamente qualsiasi deformazione di scala e rotazione ereditata dalla mappa
-		        elementoTestoHTML.style.setProperty("transform", "none", "important");
-		        elementoTestoHTML.style.setProperty("transform-origin", "center bottom", "important");
+		        // Lo forziamo a usare la modalità fixed assoluta del browser web
+		        elementoTestoHTML.style.position = "fixed";
+		        elementoTestoHTML.style.bottom = "20px";                       
 		        
+		        // 🌟 LARGHEZZA ALL'80% DELLO SCHERMO REALE (Indipendente dallo zoom della mappa)
+		        elementoTestoHTML.style.width = "80vw"; 
+		        elementoTestoHTML.style.maxWidth = "80vw";
+		        
+		        // Centratura perfetta calcolata sulla finestra del telefono, non sulla mappa
+		        elementoTestoHTML.style.transform = "translateX(-50%)";
 		        elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.6)";
+		        
+		        // Azzera qualsiasi influenza di zoom ereditata da Animate
+		        elementoTestoHTML.style.zoom = "1";
 		    }
 		    
 		    var tDissolvenza = (typeof durataDissolvenza !== 'undefined') ? durataDissolvenza : 200;
@@ -2788,7 +2792,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#000066").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#CC6600").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2821,8 +2825,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790504333875", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790504333875", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790504744106", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790504744106", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
