@@ -2712,11 +2712,11 @@ if (reversed == null) { reversed = false; }
 		    elementoTestoHTML.style.opacity = "0";
 		    elementoTestoHTML.style.display = "block";
 		    
-		    // 🌟 RILEVAMENTO TIPO DISPOSITIVO (Risolve il problema del PC)
+		    // 🌟 RILEVAMENTO TIPO DISPOSITIVO
 		    var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 		    
 		    if (!isTouchDevice) {
-		        // 💻 SE SIAMO SU PC DESKTOP: Il pop-up segue il mouse in modo classico
+		        // 💻 SE SIAMO SU PC DESKTOP: Insegue il mouse in modo classico (Stretto a 200px)
 		        elementoTestoHTML.style.position = "absolute";
 		        elementoTestoHTML.style.bottom = "auto";
 		        elementoTestoHTML.style.transform = "none";
@@ -2740,20 +2740,28 @@ if (reversed == null) { reversed = false; }
 		        elementoTestoHTML.style.left = (rectCanvas.left + coordinataFinaleX) + "px";
 		        elementoTestoHTML.style.top = (rectCanvas.top + coordinataFinaleY) + "px";
 		    } else {
-		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Barra fissa assoluta indipendente dallo zoom del Canvas
+		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Barra a schermo intero bloccata contro lo zoom
 		        elementoTestoHTML.style.left = "auto";
 		        elementoTestoHTML.style.top = "auto";
-		        
 		        elementoTestoHTML.style.position = "fixed";
-		        elementoTestoHTML.style.bottom = "20px";                      
+		        elementoTestoHTML.style.bottom = "15px";                       
 		        elementoTestoHTML.style.left = "50%";                           
-		        elementoTestoHTML.style.transform = "translateX(-50%)";         
-		        elementoTestoHTML.style.width = "calc(100% - 40px)";            
-		        elementoTestoHTML.style.maxWidth = "340px";                     
-		        elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.5)";
 		        
-		        // Forza il ridimensionamento della scheda mobile a rimanere in scala standard 1:1
-		        elementoTestoHTML.style.transform += " scale(1)";
+		        // COMPENSAZIONE MATEMATICA DELLO ZOOM
+		        var scalaAttualeMappa = (mappa && mappa.scaleX) ? mappa.scaleX : 1;
+		        var scalaInversa = 1 / scalaAttualeMappa;
+		        
+		        // Centraggio e inversione dello zoom (la scheda resta 1:1 ferma)
+		        elementoTestoHTML.style.transform = "translateX(-50%) scale(" + scalaInversa + ")";
+		        
+		        // LARGHEZZA SCHERMO INTERO DINAMICA:
+		        // Rileva la larghezza della finestra del telefono e la compensa per lo zoom
+		        var larghezzaSchermoReale = window.innerWidth || document.documentElement.clientWidth;
+		        var larghezzaCalcolata = (larghezzaSchermoReale - 30) * scalaAttualeMappa;
+		        
+		        elementoTestoHTML.style.width = larghezzaCalcolata + "px";
+		        elementoTestoHTML.style.maxWidth = "95%"; 
+		        elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.6)";
 		    }
 		    
 		    var tDissolvenza = (typeof durataDissolvenza !== 'undefined') ? durataDissolvenza : 200;
@@ -2783,7 +2791,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#000000").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#FFFFFF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2816,8 +2824,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790492962301", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790492962301", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790493791558", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790493791558", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
