@@ -2539,12 +2539,12 @@ if (reversed == null) { reversed = false; }
 		                    chiudiPopupAttuale();
 		                });
 		
-		              // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
+		             // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
 		                oggetto.addEventListener("click", function(e) {
 		                    if (staTrascinando) return;
 		                    var localeCorrente = e.currentTarget;
 		
-		                    // 1. AZZERAMENTO ISTANTANEO DEL LOCALE PRECEDENTE (Risolve il problema del doppio clic)
+		                    // 1. AZZERAMENTO IMMEDIATO (Risolve il problema del salto tra stanze)
 		                    if (localeSelezionatoTouch && localeSelezionatoTouch !== localeCorrente) {
 		                        localeSelezionatoTouch.alpha = localeSelezionatoTouch.minAlpha;
 		                        chiudiPopupAttuale();
@@ -2556,30 +2556,43 @@ if (reversed == null) { reversed = false; }
 		                        chiudiPopupAttuale();
 		                        localeSelezionatoTouch = null;
 		                    } 
-		                    // 3. SE È UN NUOVO LOCALE -> LO APRIAMO AL VOLO
+		                    // 3. SE È UN NUOVO LOCALE -> LO APRIAMO
 		                    else {
 		                        localeCorrente.alpha = opacitaHover;
 		                        localeSelezionatoTouch = localeCorrente;
 		                        
 		                        if (localeCorrente.name && localeCorrente.name.indexOf("_") !== -1) {
 		                            
-		                            // 🌟 SOLUZIONE DEFINITIVA ZOOM: Pixel Web Nativi
-		                            // Di base prendiamo il click standard del PC
-		                            var pixelSchermoX = e.nativeEvent.clientX;
-		                            var pixelSchermoY = e.nativeEvent.clientY;
+		                            // 🌟 INTERCETTAZIONE DIRETTA E SICURA DEL PUNTO DI TOCCO SULLO SCHERMO
+		                            var evtReale = e.nativeEvent || window.event;
+		                            var clientX = 0;
+		                            var clientY = 0;
+		
+		                            // Controlliamo se è un vero evento touch (dito) o un click del mouse
+		                            if (evtReale && evtReale.touches && evtReale.touches.length > 0) {
+		                                clientX = evtReale.touches[0].clientX;
+		                                clientY = evtReale.touches[0].clientY;
+		                            } else if (evtReale && evtReale.changedTouches && evtReale.changedTouches.length > 0) {
+		                                clientX = evtReale.changedTouches[0].clientX;
+		                                clientY = evtReale.changedTouches[0].clientY;
+		                            } else if (evtReale) {
+		                                // Paracadute per PC Desktop (Mouse Click)
+		                                clientX = evtReale.clientX;
+		                                clientY = evtReale.clientY;
+		                            }
+		
+		                            // Calcoliamo la posizione interna al Canvas eliminando i margini della pagina web
+		                            var rectCanvas = stage.canvas.getBoundingClientRect();
+		                            var coordinataPulitaX = clientX - rectCanvas.left;
+		                            var coordinataPulitaY = clientY - rectCanvas.top;
 		                            
-		                            // Se siamo su uno smartphone/tablet, intercettiamo il punto esatto del tocco del dito
-		                            if (e.nativeEvent.changedTouches && e.nativeEvent.changedTouches.length > 0) {
-		                                pixelSchermoX = e.nativeEvent.changedTouches[0].clientX;
-		                                pixelSchermoY = e.nativeEvent.changedTouches[0].clientY;
+		                            // Se per qualsiasi errore del browser i dati sono strani, usiamo i dati di stage come paracadute
+		                            if (isNaN(coordinataPulitaX) || clientX === 0) {
+		                                coordinataPulitaX = e.stageX * (rectCanvas.width / stage.canvas.width);
+		                                coordinataPulitaY = e.stageY * (rectCanvas.height / stage.canvas.height);
 		                            }
 		                            
-		                            // Sottraiamo la posizione del Canvas nella pagina per compensare i bordi del browser
-		                            var rectCanvas = stage.canvas.getBoundingClientRect();
-		                            var coordinataPulitaX = pixelSchermoX - rectCanvas.left;
-		                            var coordinataPulitaY = pixelSchermoY - rectCanvas.top;
-		                            
-		                            // Inviamo le coordinate stabili alla scheda HTML senza passare dai calcoli di Animate
+		                            // Lancio immediato della scheda HTML nel punto esatto del tocco
 		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), coordinataPulitaX, coordinataPulitaY);
 		                        }
 		                    }
@@ -2755,7 +2768,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#0000FF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#CC33FF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2788,8 +2801,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790490230528", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790490230528", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790490711987", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790490711987", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
