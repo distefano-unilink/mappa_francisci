@@ -2712,7 +2712,7 @@ if (reversed == null) { reversed = false; }
 		    elementoTestoHTML.style.opacity = "0";
 		    elementoTestoHTML.style.display = "block";
 		    
-		    // 🌟 RILEVAMENTO TIPO DISPOSITIVO
+		   // 🌟 RILEVAMENTO TIPO DISPOSITIVO
 		    var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 		    
 		    if (!isTouchDevice) {
@@ -2740,28 +2740,29 @@ if (reversed == null) { reversed = false; }
 		        elementoTestoHTML.style.left = (rectCanvas.left + coordinataFinaleX) + "px";
 		        elementoTestoHTML.style.top = (rectCanvas.top + coordinataFinaleY) + "px";
 		    } else {
-		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Barra a schermo intero bloccata contro lo zoom
-		        elementoTestoHTML.style.left = "auto";
+		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Svincolato al 100% da Animate
+		        // Lo spostiamo fisicamente fuori dal contenitore di Animate e lo attacchiamo alla radice del browser
+		        if (elementoTestoHTML.parentNode !== document.body) {
+		            document.body.appendChild(elementoTestoHTML);
+		        }
+		        
 		        elementoTestoHTML.style.top = "auto";
+		        elementoTestoHTML.style.left = "50%";
+		        
+		        // Lo forziamo a usare la modalità fixed assoluta del browser web
 		        elementoTestoHTML.style.position = "fixed";
-		        elementoTestoHTML.style.bottom = "15px";                       
-		        elementoTestoHTML.style.left = "50%";                           
+		        elementoTestoHTML.style.bottom = "20px";                       
 		        
-		        // COMPENSAZIONE MATEMATICA DELLO ZOOM
-		        var scalaAttualeMappa = (mappa && mappa.scaleX) ? mappa.scaleX : 1;
-		        var scalaInversa = 1 / scalaAttualeMappa;
+		        // 🌟 LARGHEZZA ALL'80% DELLO SCHERMO REALE (Indipendente dallo zoom della mappa)
+		        elementoTestoHTML.style.width = "80vw"; 
+		        elementoTestoHTML.style.maxWidth = "80vw";
 		        
-		        // Centraggio e inversione dello zoom (la scheda resta 1:1 ferma)
-		        elementoTestoHTML.style.transform = "translateX(-50%) scale(" + scalaInversa + ")";
-		        
-		        // LARGHEZZA SCHERMO INTERO DINAMICA:
-		        // Rileva la larghezza della finestra del telefono e la compensa per lo zoom
-		        var larghezzaSchermoReale = window.innerWidth || document.documentElement.clientWidth;
-		        var larghezzaCalcolata = (larghezzaSchermoReale - 30) * scalaAttualeMappa;
-		        
-		        elementoTestoHTML.style.width = larghezzaCalcolata + "px";
-		        elementoTestoHTML.style.maxWidth = "95%"; 
+		        // Centratura perfetta calcolata sulla finestra del telefono, non sulla mappa
+		        elementoTestoHTML.style.transform = "translateX(-50%)";
 		        elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.6)";
+		        
+		        // Azzera qualsiasi influenza di zoom ereditata da Animate
+		        elementoTestoHTML.style.zoom = "1";
 		    }
 		    
 		    var tDissolvenza = (typeof durataDissolvenza !== 'undefined') ? durataDissolvenza : 200;
@@ -2791,7 +2792,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#FFFFFF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#FF0000").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2824,8 +2825,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790493791558", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790493791558", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790495266858", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790495266858", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
