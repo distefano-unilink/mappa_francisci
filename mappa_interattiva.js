@@ -2603,7 +2603,7 @@ if (reversed == null) { reversed = false; }
 		}
 		
 		// ====================================================
-		// 3. FUNZIONE DI IMPAGINAZIONE POP-UP HTML DINAMICA (Fisso in Basso - Zona Viola)
+		// 3. FUNZIONE DI IMPAGINAZIONE POP-UP HTML DINAMICA (Ibrida PC/Touch e Anti-Zoom)
 		// ====================================================
 		function apriPopupSuSchermo(identificatoreLibreria, mX, mY) {
 		    var datiStanza = databaseLocaliOnline[identificatoreLibreria];
@@ -2655,43 +2655,34 @@ if (reversed == null) { reversed = false; }
 		        // 🌟 1. TITOLO AUTOMATICO
 		        schemaHTML += "<b style='font-size:15px; color:" + coloreTitolo + "; background-color:" + sfondoTitolo + "; display:block; padding:0px 8px; margin:-5px 40px 8px -8px; border-radius:4px;'>" + datiStanza.nome + "</b>";
 		        
-		        // 🌟 INSERIMENTO STATO DEL LOCALE SUBITO SOTTO AL TITOLO
 		        if (datiStanza.stato && datiStanza.stato !== "" && datiStanza.stato !== "NESSUNO" && datiStanza.stato !== "Nessuno") {
 		            schemaHTML += "<div style='font-size:12px; color:cyan; font-style:italic; margin-top:-5px;'>" + datiStanza.stato + "</div>";
 		        }
 		        
-		        // 🌟 RIGA DI SEPARAZIONE
 		        schemaHTML += "<hr style='border:0; border-top:1px solid #3e4451; margin:6px 0;'>";
 		        
-		        // 🌟 2. INVENTARIO (Sedie, lavandini, ecc.)
+		        // 🌟 2. INVENTARIO
 		        if (datiStanza.tipoSedie && datiStanza.tipoSedie !== "" && datiStanza.tipoSedie !== "NESSUNA" && datiStanza.tipoSedie !== "Nessuna") {
 		            schemaHTML += "<span style='color:#cccccc;'>Tipo sedie:</span> <b style='color:#ffffff;'>" + datiStanza.tipoSedie + "</b><br>";
 		        }
-		        
 		        if (datiStanza.numSedie && datiStanza.numSedie !== "") {
 		            schemaHTML += "<span style='color:#cccccc;'>N° di sedie:</span> <b style='color:#ffffff;'>" + datiStanza.numSedie + "</b><br>";
 		        }
-		        
 			    if (datiStanza.tipoTavolo && datiStanza.tipoTavolo !== "") {
 		            schemaHTML += "<span style='color:#cccccc;'>Tipo Tavolo:</span> <b style='color:#ffffff;'>" + datiStanza.tipoTavolo + "</b><br>";
 		        }
-			
 			    if (datiStanza.numTavolo && datiStanza.numTavolo !== "") {
 		            schemaHTML += "<span style='color:#cccccc;'>N° Tavoli:</span> <b style='color:#ffffff;'>" + datiStanza.numTavolo + "</b><br>";
 		        }
-			
 			    if (datiStanza.water && datiStanza.water !== "") {
 		            schemaHTML += "<span style='color:#cccccc;'>N° di Water:</span> <b style='color:#ffffff;'>" + datiStanza.water + "</b><br>";
 		        }
-			
 		        if (datiStanza.lavandini && datiStanza.lavandini !== "" && datiStanza.lavandini !== "NESSUNA") {
 		            schemaHTML += "<span style='color:#cccccc;'>Lavandini:</span> <b style='color:#ffffff;'>" + datiStanza.lavandini + "</b><br>";
 				}
-			
 				if (datiStanza.fanCoil && datiStanza.fanCoil !== "") {
 		            schemaHTML += "<span style='color:#cccccc;'>N° di FanCoil:</span> <b style='color:#ffffff;'>" + datiStanza.fanCoil + "</b><br>";
 		        }	
-			
 				if (datiStanza.plafoniere && datiStanza.plafoniere !== "" && datiStanza.fanCoil !== "NESSUNA") {
 		            schemaHTML += "<span style='color:#cccccc;'>Plafoniere:</span> <b style='color:#ffffff;'>" + datiStanza.plafoniere + "</b><br>";
 		        }
@@ -2706,41 +2697,65 @@ if (reversed == null) { reversed = false; }
 		            
 		            schemaHTML += "<p style='margin:8px 0 0 0; font-size:12px; color:#bbbbbb;'>" + "<span style='color:#cccccc;'><b style='color:cyan;'>NOTA:</span></b> " + testoElaborato + "</p>";
 		        }
-			
 			    if (datiStanza.guasto && datiStanza.guasto !== "" && datiStanza.guasto !== "NESSUNA") {
 		            schemaHTML += "<span style='color:#cccccc;'>GUASTO:</span> <b style='color:red;'>" + datiStanza.guasto + "</b><br>";
 		        }
 		        
-		        // 🖼️ LA FOTO INSERITA IN FONDO A TUTTO IL TESTO
 		        schemaHTML += tagImmagine;
 		        
 		    } else {
-		        // Messaggio se il locale non è ancora compilato su Google Fogli
 		        schemaHTML = "<b style='color:#ffcc00;'>" + identificatoreLibreria.replace(/_/g, " ") + "</b><br><hr style='border:0; border-top:1px solid #3e4451; margin:6px 0;'>Locale rilevato sulla mappa.<br><span style='font-size:11px; color:#888;'>In attesa di compilazione su Google Fogli.</span>";
-		        
-		        // 🖼️ LA FOTO INSERITA IN FONDO ANCHE NEL CASO DI STANZA VUOTA
 		        schemaHTML += tagImmagine;
 		    }
 		    
-		    // Iniezione del testo nel box HTML
 		    elementoTestoHTML.innerHTML = schemaHTML;
 		    elementoTestoHTML.style.opacity = "0";
 		    elementoTestoHTML.style.display = "block";
 		    
-		    // ⚙️ RESET DELLE VECCHIE COORDINATE DINAMICHE
-		    elementoTestoHTML.style.left = "auto";
-		    elementoTestoHTML.style.top = "auto";
+		    // 🌟 RILEVAMENTO TIPO DISPOSITIVO (Risolve il problema del PC)
+		    var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 		    
-		    // 📱 FORZATURA CSS: BLOCCO FISSO IN BASSO AL CENTRO DELLO SCHERMO
-		    elementoTestoHTML.style.position = "fixed";
-		    elementoTestoHTML.style.bottom = "20px";                      // Distanza dal bordo inferiore
-		    elementoTestoHTML.style.left = "50%";                           // Centrato orizzontalmente
-		    elementoTestoHTML.style.transform = "translateX(-50%)";         // Calcolo esatto del centro geometrico
-		    elementoTestoHTML.style.width = "calc(100% - 40px)";            // Larghezza ottimizzata per mobile
-		    elementoTestoHTML.style.maxWidth = "340px";                     // Evita distorsioni su schermi larghi
-		    elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.5)"; // Ombra sfumata verso l'alto
+		    if (!isTouchDevice) {
+		        // 💻 SE SIAMO SU PC DESKTOP: Il pop-up segue il mouse in modo classico
+		        elementoTestoHTML.style.position = "absolute";
+		        elementoTestoHTML.style.bottom = "auto";
+		        elementoTestoHTML.style.transform = "none";
+		        elementoTestoHTML.style.width = "200px";
+		        elementoTestoHTML.style.maxWidth = "200px";
+		        
+		        var canvasW = stage.canvas.width;
+		        var canvasH = stage.canvas.height;
+		        var rectCanvas = stage.canvas.getBoundingClientRect();
+		        var larghezzaRealeScheda = elementoTestoHTML.offsetWidth; 
+		        var altezzaRealeScheda = elementoTestoHTML.offsetHeight; 
+		        
+		        var coordinataFinaleX = (mX < canvasW / 2) ? (mX + distanzaDalMouse) : (mX - larghezzaRealeScheda - distanzaDalMouse);
+		        var coordinataFinaleY = (mY < canvasH / 2) ? (mY + distanzaDalMouse) : (mY - altezzaRealeScheda - distanzaDalMouse);
+		        
+		        if (coordinataFinaleX + larghezzaRealeScheda > canvasW) coordinataFinaleX = canvasW - larghezzaRealeScheda - 10;
+		        if (coordinataFinaleX < 10) coordinataFinaleX = 10;
+		        if (coordinataFinaleY + altezzaRealeScheda > canvasH) coordinataFinaleY = canvasH - altezzaRealeScheda - 10;
+		        if (coordinataFinaleY < 10) coordinataFinaleY = 10;
+		        
+		        elementoTestoHTML.style.left = (rectCanvas.left + coordinataFinaleX) + "px";
+		        elementoTestoHTML.style.top = (rectCanvas.top + coordinataFinaleY) + "px";
+		    } else {
+		        // 📱 SE SIAMO SU DISPOSITIVO TOUCH: Barra fissa assoluta indipendente dallo zoom del Canvas
+		        elementoTestoHTML.style.left = "auto";
+		        elementoTestoHTML.style.top = "auto";
+		        
+		        elementoTestoHTML.style.position = "fixed";
+		        elementoTestoHTML.style.bottom = "20px";                      
+		        elementoTestoHTML.style.left = "50%";                           
+		        elementoTestoHTML.style.transform = "translateX(-50%)";         
+		        elementoTestoHTML.style.width = "calc(100% - 40px)";            
+		        elementoTestoHTML.style.maxWidth = "340px";                     
+		        elementoTestoHTML.style.boxShadow = "0px -4px 20px rgba(0,0,0,0.5)";
+		        
+		        // Forza il ridimensionamento della scheda mobile a rimanere in scala standard 1:1
+		        elementoTestoHTML.style.transform += " scale(1)";
+		    }
 		    
-		    // Gestione della dissolvenza di comparsa
 		    var tDissolvenza = (typeof durataDissolvenza !== 'undefined') ? durataDissolvenza : 200;
 		    elementoTestoHTML.style.transition = "opacity " + tDissolvenza + "ms ease-in-out";
 		    
@@ -2768,7 +2783,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#CCFF00").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#000000").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2801,8 +2816,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790491906857", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790491906857", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790492962301", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790492962301", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
