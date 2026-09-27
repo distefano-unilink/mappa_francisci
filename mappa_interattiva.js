@@ -2539,49 +2539,49 @@ if (reversed == null) { reversed = false; }
 		                    chiudiPopupAttuale();
 		                });
 		
-		             // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
+		              // 📱 COMPORTAMENTO INTERRUTTORE (TOUCH E CLICK PC)
 		                oggetto.addEventListener("click", function(e) {
 		                    if (staTrascinando) return;
 		                    var localeCorrente = e.currentTarget;
 		
+		                    // 1. AZZERAMENTO ISTANTANEO DEL LOCALE PRECEDENTE (Risolve il problema del doppio clic)
+		                    if (localeSelezionatoTouch && localeSelezionatoTouch !== localeCorrente) {
+		                        localeSelezionatoTouch.alpha = localeSelezionatoTouch.minAlpha;
+		                        chiudiPopupAttuale();
+		                    }
+		
+		                    // 2. SE IL LOCALE TOCCATO ERA GIÀ APERTO -> LO CHIUDIAMO
 		                    if (localeSelezionatoTouch === localeCorrente) {
 		                        localeCorrente.alpha = localeCorrente.minAlpha;
 		                        chiudiPopupAttuale();
 		                        localeSelezionatoTouch = null;
-		                    } else {
-		                        if (localeSelezionatoTouch) {
-		                            localeSelezionatoTouch.alpha = localeSelezionatoTouch.minAlpha;
-		                        }
+		                    } 
+		                    // 3. SE È UN NUOVO LOCALE -> LO APRIAMO AL VOLO
+		                    else {
 		                        localeCorrente.alpha = opacitaHover;
+		                        localeSelezionatoTouch = localeCorrente;
+		                        
 		                        if (localeCorrente.name && localeCorrente.name.indexOf("_") !== -1) {
 		                            
-		                            // 🌟 CALCOLO DEL CENTRO GEOMETRICO REALE DELLA STANZA (Ancoraggio Fisso)
-		                            var boundingBox = localeCorrente.getBounds();
-		                            var centroLocaleX = 0;
-		                            var centroLocaleY = 0;
+		                            // 🌟 SOLUZIONE DEFINITIVA ZOOM: Pixel Web Nativi
+		                            // Di base prendiamo il click standard del PC
+		                            var pixelSchermoX = e.nativeEvent.clientX;
+		                            var pixelSchermoY = e.nativeEvent.clientY;
 		                            
-		                            if (boundingBox) {
-		                                // Se il poligono ha dei confini definiti, prendiamo il centro esatto
-		                                centroLocaleX = boundingBox.x + (boundingBox.width / 2);
-		                                centroLocaleY = boundingBox.y + (boundingBox.height / 2);
+		                            // Se siamo su uno smartphone/tablet, intercettiamo il punto esatto del tocco del dito
+		                            if (e.nativeEvent.changedTouches && e.nativeEvent.changedTouches.length > 0) {
+		                                pixelSchermoX = e.nativeEvent.changedTouches[0].clientX;
+		                                pixelSchermoY = e.nativeEvent.changedTouches[0].clientY;
 		                            }
 		                            
-		                            // Trasformiamo le coordinate interne della stanza in pixel globali di Animate
-		                            var puntoGlobaleAnimate = localeCorrente.localToGlobal(centroLocaleX, centroLocaleY);
-		                            
-		                            // Convertiamo i pixel di Animate in pixel reali della finestra del browser (Scala Canvas)
+		                            // Sottraiamo la posizione del Canvas nella pagina per compensare i bordi del browser
 		                            var rectCanvas = stage.canvas.getBoundingClientRect();
-		                            var fattoreScalaX = rectCanvas.width / stage.canvas.width;
-		                            var fattoreScalaY = rectCanvas.height / stage.canvas.height;
+		                            var coordinataPulitaX = pixelSchermoX - rectCanvas.left;
+		                            var coordinataPulitaY = pixelSchermoY - rectCanvas.top;
 		                            
-		                            var pixelRealiX = puntoGlobaleAnimate.x * fattoreScalaX;
-		                            var pixelRealiY = puntoGlobaleAnimate.y * fattoreScalaY;
-		                            
-		                            // Inviamo le coordinate stabili del centro della stanza alla scheda HTML
-		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), pixelRealiX, pixelRealiY);
-		                            
+		                            // Inviamo le coordinate stabili alla scheda HTML senza passare dai calcoli di Animate
+		                            apriPopupSuSchermo(localeCorrente.name.toUpperCase(), coordinataPulitaX, coordinataPulitaY);
 		                        }
-		                        localeSelezionatoTouch = localeCorrente;
 		                    }
 		                });
 		            }
@@ -2755,7 +2755,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#663300").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#0000FF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2788,8 +2788,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790489528778", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790489528778", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790490230528", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790490230528", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
