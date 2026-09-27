@@ -2821,8 +2821,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790501215046", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790501215046", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790501304496", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790501304496", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
