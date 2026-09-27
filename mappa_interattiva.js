@@ -2838,8 +2838,6 @@ if (reversed == null) { reversed = false; }
 		        elementoTestoHTML.innerHTML = ""; 
 		    }
 		}
-		// Ricarica la pagina in automatico ogni 30 secondi per aggiornare i guasti live dal bot vocale
-		setInterval(function() { window.location.reload(); }, 5000);
 	}
 
 	// actions tween:
@@ -2873,8 +2871,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790526831317", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790526831317", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790527369154", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790527369154", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
