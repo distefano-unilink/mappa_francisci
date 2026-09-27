@@ -2788,7 +2788,7 @@ if (reversed == null) { reversed = false; }
 	this.shape.setTransform(571.4,591.05);
 
 	this.shape_1 = new cjs.Shape();
-	this.shape_1.graphics.f("#9999FF").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
+	this.shape_1.graphics.f("#999999").s().p("AnGGRQi9ilABjsQgBjqC9inQC8imEKAAQEKAAC9CmQC8CnABDqQgBDsi8ClQi9CnkKAAQkKAAi8ing");
 	this.shape_1.setTransform(571.4,591.05);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
@@ -2821,8 +2821,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790500532059", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790500532059", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790501215046", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790501215046", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
