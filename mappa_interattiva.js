@@ -2437,135 +2437,131 @@ if (reversed == null) { reversed = false; }
 		    }
 		});
 		stage.addEventListener("stagemouseup", function(evt) { staTrascinando = false; });
+		
 		// ====================================================
-		// CONNESSIONE CORRETTA E PARSING AVANZATO GOOGLE SHEETS
+		// CONNESSIONE CORRETTA E REFRESH AUTOMATICO IN BACKGROUND
 		// ====================================================
 		var urlCSV = "https://docs.google.com/spreadsheets/d/" + idFoglioGoogle + "/export?format=csv";
 		
-		fetch(urlCSV)
-		    .then(function(response) { return response.text(); })
-		    .then(function(data) {
-		        var righe = data.split(/\r?\n/);
-		        
-		        for (var i = 1; i < righe.length; i++) {
-		            if (!righe[i]) continue;
-		            
-		            // Gestione automatica del separatore (italiano ';' o inglese ',')
-		            var separatore = righe[i].indexOf(";") !== -1 ? ";" : ",";
-		            
-		            // Splittiamo la riga tenendo conto delle frasi lunghe virgolettate con virgole dentro
-		            var colonne = [];
-		            var inQuotes = false;
-		            var campoCorrente = "";
-		            
-		            for (var c = 0; c < righe[i].length; c++) {
-		                var carattere = righe[i].charAt(c);
-		                if (carattere === '"') {
-		                    inQuotes = !inQuotes;
-		                } else if (carattere === separatore && !inQuotes) {
-		                    colonne.push(campoCorrente);
-		                    campoCorrente = "";
-		                } else {
-		                    campoCorrente += carattere;
-		                }
-		            }
-		            colonne.push(campoCorrente); // Aggiunge l'ultima colonna
-		            
-		if (colonne && colonne.length >= 2) {
-		    var campoID = colonne[0].replace(/['"]+/g, '').trim().toUpperCase();
+		// Protezione indici colonne anti-taglio per la chat
+		var F_ZERO = 0, F_UNO = 1, F_DUE = 2, F_TRE = 3, F_QUATTRO = 4, F_CINQUE = 5;
+		var F_SEI = 6, F_SETTE = 7, F_OTTO = 8, F_NOVE = 9, F_DIECI = 10, F_UNDICI = 11, F_DODICI = 12;
+		
+		function aggiornaMappaDalFoglio() {
+		    console.log("🔄 Controllo aggiornamenti dal Foglio Google in background...");
 		    
-		    databaseLocaliOnline[campoID] = {
-		        nome: colonne[1] ? colonne[1].replace(/['"]+/g, '').trim() : "",
-		        
-		        stato: colonne[2] ? colonne[2].replace(/['"]+/g, '').trim() : "", 
-		        
-		        tipoSedie: colonne[3] ? colonne[3].replace(/['"]+/g, '').trim() : "",
-				
-		        numSedie: colonne[4] ? colonne[4].replace(/['"]+/g, '').trim() : "",
-				
-		        tipoTavolo: colonne[5] ? colonne[5].replace(/['"]+/g, '').trim() : "",
-				
-				numTavolo: colonne[6] ? colonne[6].replace(/['"]+/g, '').trim() : "",
-				
-				water: colonne[7] ? colonne[7].replace(/['"]+/g, '').trim() : "",
-				
-				lavandini: colonne[8] ? colonne[8].replace(/['"]+/g, '').trim() : "",
-				
-		        fanCoil: colonne[9] ? colonne[9].replace(/['"]+/g, '').trim() : "",
-				
-				plafoniere: colonne[10] ? colonne[10].replace(/['"]+/g, '').trim() : "",
-				
-				note: colonne[11] ? colonne[11].replace(/['"]+/g, '').trim() : "",
-				
-				guasto: colonne[12] ? colonne[12].replace(/['"]+/g, '').trim() : ""
-		    };
-		}
-		        }
-		       console.log("Database Google Sheets sincronizzato con successo!");
-		        
-		        // 🌟 ACCENSIONE AUTOMATICA IN ROSSO DEI LOCALI CON GUASTO + PULSAZIONE
-		        if (root.mappa_mc) {
-		            var elementiPiani = root.mappa_mc.children;
-		            for (var k = 0; k < elementiPiani.length; k++) {
-		                var stanzaGrafica = elementiPiani[k];
-		                if (stanzaGrafica && stanzaGrafica.name) {
-		                    var idMaiuscolo = stanzaGrafica.name.toUpperCase();
-		                    var datiAbbinati = databaseLocaliOnline[idMaiuscolo];
-		                    
-		                    // Se la stanza ha un guasto compilato (e non è vuoto, NESSUNA o OFF)
-		                    if (datiAbbinati && datiAbbinati.guasto && datiAbbinati.guasto !== "" && datiAbbinati.guasto !== "NESSUNA" && datiAbbinati.guasto !== "Nessuna" && datiAbbinati.guasto !== "OFF" && datiAbbinati.guasto !== "off") {
-		                        
-		                        // 🌟 Nuova etichetta personalizzata per far capire al ciclo di animazione che questa stanza deve pulsare
-		                        stanzaGrafica.isGuasto = true;
-		                        
-		                        // Impostiamo i limiti di opacità entro cui la stanza deve oscillare
-		                        stanzaGrafica.minAlpha = 0.3; // Opacità minima del guasto
-		                        stanzaGrafica.maxAlpha = 0.8; // Opacità massima del guasto
-		                        stanzaGrafica.alpha = stanzaGrafica.maxAlpha;
-		                        
-		                        // Direzione iniziale della pulsazione (1 = si sta scurendo, -1 = si sta schiarendo)
-		                        stanzaGrafica.direzionePulsazione = 1; 
-		                        
-		                        // Creiamo la colorazione rossa e applichiamo i filtri nativi di Animate/CreateJS
-		                        var filtroRosso = new createjs.ColorFilter(1, 0, 0, 1, 255, 0, 0, 0); 
-		                        stanzaGrafica.filters = [filtroRosso];
-		                        stanzaGrafica.cache(-50, -50, 1500, 1500); 
+		    var urlFresco = urlCSV + "&nocache=" + new Date().getTime();
+		    
+		    fetch(urlFresco)
+		        .then(function(response) { return response.text(); })
+		        .then(function(data) {
+		            var righe = data.split(/\r?\n/);
+		            
+		            for (var i = 1; i < righe.length; i++) {
+		                if (!righe[i]) continue;
+		                
+		                var separatore = righe[i].indexOf(";") !== -1 ? ";" : ",";
+		                var colonne = [];
+		                var inQuotes = false;
+		                var campoCorrente = "";
+		                
+		                for (var c = 0; c < righe[i].length; c++) {
+		                    var carattere = righe[i].charAt(c);
+		                    if (carattere === '"') {
+		                        inQuotes = !inQuotes;
+		                    } else if (carattere === separatore && !inQuotes) {
+		                        colonne.push(campoCorrente);
+		                        campoCorrente = "";
+		                    } else {
+		                        campoCorrente += carattere;
 		                    }
 		                }
+		                colonne.push(campoCorrente);
+		                
+		                 if (colonne && colonne.length >= 2) {
+		                    var campoID = colonne[F_ZERO].replace(/['"]+/g, '').trim().toUpperCase();
+		                    
+		                    databaseLocaliOnline[campoID] = {
+		                        nome: colonne[F_UNO] ? colonne[F_UNO].replace(/['"]+/g, '').trim() : "",
+		                        stato: colonne[F_DUE] ? colonne[F_DUE].replace(/['"]+/g, '').trim() : "", 
+		                        tipoSedie: colonne[F_TRE] ? colonne[F_TRE].replace(/['"]+/g, '').trim() : "",
+		                        numSedie: colonne[F_QUATTRO] ? colonne[F_QUATTRO].replace(/['"]+/g, '').trim() : "",
+		                        tipoTavolo: colonne[F_CINQUE] ? colonne[F_CINQUE].replace(/['"]+/g, '').trim() : "",
+		                        numTavolo: colonne[F_SEI] ? colonne[F_SEI].replace(/['"]+/g, '').trim() : "",
+		                        water: colonne[F_SETTE] ? colonne[F_SETTE].replace(/['"]+/g, '').trim() : "",
+		                        lavandini: colonne[F_OTTO] ? colonne[F_OTTO].replace(/['"]+/g, '').trim() : "",
+		                        fanCoil: colonne[F_NOVE] ? colonne[F_NOVE].replace(/['"]+/g, '').trim() : "",
+		                        plafoniere: colonne[F_DIECI] ? colonne[F_DIECI].replace(/['"]+/g, '').trim() : "",
+		                        note: colonne[F_UNDICI] ? colonne[F_UNDICI].replace(/['"]+/g, '').trim() : "",
+		                        guasto: colonne[F_DODICI] ? colonne[F_DODICI].replace(/['"]+/g, '').trim() : ""
+		                    };
+		                }
 		            }
 		            
-		            // 🌟 AVVIO DEL MOTORE DI ANIMAZIONE CONTINUA PER I GUASTI
-		            // Questo evento scatta a ogni fotogramma della mappa (60 volte al secondo)
-		            createjs.Ticker.addEventListener("tick", function(event) {
-		                // Eseguiamo l'animazione solo se la mappa non è bloccata e l'utente non ci ha cliccato sopra
-		                for (var j = 0; j < elementiPiani.length; j++) {
-		                    var stanzaPulsante = elementiPiani[j];
-		                    
-		                    // Facciamo pulsare SOLO le stanze marchiate come guasto e che NON sono attualmente selezionate/sotto l'hover
-		                    if (stanzaPulsante && stanzaPulsante.isGuasto && stanzaPulsante !== localeSelezionatoTouch) {
+		            // Sincronizzazione visiva immediata e dinamica dei guasti sui poligoni della mappa
+		            if (root.mappa_mc) {
+		                var elementiPiani = root.mappa_mc.children;
+		                for (var k = 0; k < elementiPiani.length; k++) {
+		                    var stanzaGrafica = elementiPiani[k];
+		                    if (stanzaGrafica && stanzaGrafica.name) {
+		                        var idMaiuscolo = stanzaGrafica.name.toUpperCase();
+		                        var datiAbbinati = databaseLocaliOnline[idMaiuscolo];
 		                        
-		                        // Calcoliamo la velocità del lampeggio (0.015 è una velocità morbida e rilassante)
-		                        stanzaPulsante.alpha -= (0.015 * stanzaPulsante.direzionePulsazione);
-		                        
-		                        // Se tocca il massimo dell'80% o il minimo del 30%, inverte la direzione
-		                        if (stanzaPulsante.alpha <= stanzaPulsante.minAlpha) {
-		                            stanzaPulsante.alpha = stanzaPulsante.minAlpha;
-		                            stanzaPulsante.direzionePulsazione = -1; // Inverte e inizia a salire
-		                        } else if (stanzaPulsante.alpha >= stanzaPulsante.maxAlpha) {
-		                            stanzaPulsante.alpha = stanzaPulsante.maxAlpha;
-		                            stanzaPulsante.direzionePulsazione = 1;  // Inverte e inizia a scendere
+		                        if (datiAbbinati && datiAbbinati.guasto && datiAbbinati.guasto !== "" && datiAbbinati.guasto !== "NESSUNA" && datiAbbinati.guasto !== "Nessuna" && datiAbbinati.guasto !== "OFF" && datiAbbinati.guasto !== "off") {
+		                            if (!stanzaGrafica.isGuasto) {
+		                                stanzaGrafica.isGuasto = true;
+		                                stanzaGrafica.minAlpha = 0.3; 
+		                                stanzaGrafica.maxAlpha = 0.8; 
+		                                stanzaGrafica.alpha = stanzaGrafica.maxAlpha;
+		                                stanzaGrafica.direzionePulsazione = 1; 
+		                                
+		                                var filtroRosso = new createjs.ColorFilter(1, 0, 0, 1, 255, 0, 0, 0); 
+		                                stanzaGrafica.filters = [filtroRosso];
+		                                stanzaGrafica.cache(-50, -50, 1500, 1500); 
+		                            }
+		                        } else {
+		                            if (stanzaGrafica.isGuasto) {
+		                                stanzaGrafica.isGuasto = false;
+		                                stanzaGrafica.minAlpha = (stanzaGrafica.name.indexOf("cavedio_") === 0 || stanzaGrafica.name.indexOf("scale_") === 0 || stanzaGrafica.name.indexOf("ascensore_") === 0 || stanzaGrafica.name.indexOf("lan_") === 0 || stanzaGrafica.name.indexOf("scala_") === 0) ? 0.01 : opacitaRiposo;
+		                                stanzaGrafica.alpha = stanzaGrafica.minAlpha;
+		                                stanzaGrafica.filters = []; 
+		                                stanzaGrafica.uncache(); 
+		                            }
 		                        }
 		                    }
 		                }
-		            });
+		            }
+		            console.log("✅ Database online sincronizzato con successo!");
+		        })
+		        .catch(function(error) {
+		            console.error("Errore nel refresh dei dati in background: ", error);
+		        });
+		}
+		
+		aggiornaMappaDalFoglio();
+		setInterval(aggiornaMappaDalFoglio, 15000);
+		
+		createjs.Ticker.addEventListener("tick", function(event) {
+		    if (root.mappa_mc) {
+		        var elementiPianiPerTicker = root.mappa_mc.children;
+		        for (var j = 0; j < elementiPianiPerTicker.length; j++) {
+		            var stanzaPulsante = elementiPianiPerTicker[j];
+		            if (stanzaPulsante && stanzaPulsante.isGuasto && stanzaPulsante !== localeSelezionatoTouch) {
+		                stanzaPulsante.alpha -= (0.015 * stanzaPulsante.direzionePulsazione);
+		                if (stanzaPulsante.alpha <= stanzaPulsante.minAlpha) {
+		                    stanzaPulsante.alpha = stanzaPulsante.minAlpha;
+		                    stanzaPulsante.direzionePulsazione = -1; 
+		                } else if (stanzaPulsante.alpha >= stanzaPulsante.maxAlpha) {
+		                    stanzaPulsante.alpha = stanzaPulsante.maxAlpha;
+		                    stanzaPulsante.direzionePulsazione = 1;  
+		                }
+		            }
 		        }
-		    })
-		    .catch(function(error) {
-		        console.error("Errore nel download da Google Fogli: ", error);
-		    });
+		    }
+		});
 		
 		// GESTIONE AUTOMATICA STANZE, HOVER E COMPATIBILITÀ TOUCH SCREEN (Versione Diagnostica)
-		var localeSelezionatoTouch = null;
+		localeSelezionatoTouch = null;
 		
 		if (root.mappa_mc) {
 		    var elementiMappa = root.mappa_mc.children;
@@ -2871,8 +2867,8 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/Bitmap2.png?1790527369154", id:"Bitmap2"},
-		{src:"images/PLANIMETRIA_P4_PNG3.png?1790527369154", id:"PLANIMETRIA_P4_PNG3"}
+		{src:"images/Bitmap2.png?1790588350473", id:"Bitmap2"},
+		{src:"images/PLANIMETRIA_P4_PNG3.png?1790588350473", id:"PLANIMETRIA_P4_PNG3"}
 	],
 	preloads: []
 };
